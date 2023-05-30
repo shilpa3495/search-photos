@@ -1,0 +1,47 @@
+.header-searchbar-container {
+  background-color: #000;
+  padding: 25px;
+}
+
+.header-searchbar-title {
+  font-size: 30px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.header-searchbar-input-main-container {
+  width: 60%;
+  margin: auto;
+  position: relative;
+}
+
+.header-searchbar-input-container {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ada9a9;
+  padding: 10px 20px;
+  background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat;
+  outline: 0;
+  background-position: right 20px bottom 15px;
+  background-size: 16px;
+  margin-bottom: 10px;
+}
+
+.header-card-container {
+  position: absolute !important;
+  width: -webkit-fill-available;
+  text-align: left;
+}
+
+.header-card-container div {
+  cursor: pointer;
+  padding: 10px;
+  transition: all 0.25s ease-in;
+  font-size: 14px;
+}
+
+.header-card-container div :hover {
+  background-color: #ebebeb;
+}

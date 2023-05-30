@@ -1,0 +1,20 @@
+.home-row {
+  row-gap: 20px;
+}
+
+.preview-modal-body-container {
+  margin: auto;
+}
+
+.preview-modal {
+  max-width: 80vw !important;
+}
+
+.preview-modal .modal-content {
+  height: 90vh;
+}
+
+.preview-modal-image {
+  height: 100%;
+  width: 100%;
+}
