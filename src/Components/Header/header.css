@@ -1,6 +1,8 @@
 .header-searchbar-container {
   background-color: #000;
   padding: 25px;
+  position: sticky;
+  top: 0;
 }
 
 .header-searchbar-title {
