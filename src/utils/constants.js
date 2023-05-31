@@ -4,4 +4,4 @@ export const baseURL =
 export const imageUrl = "https://live.staticflickr.com/";
 
 export const searchUrl =
-  "https://api.flickr.com/services/rest/?format=json&sort=random&method=flickr.photos.search&api_key=c757cc8fa7e9cb94be85a8f1dfb0a2ce&nojsoncallback=1&tags=dogl";
+  "https://api.flickr.com/services/rest/?format=json&sort=random&method=flickr.photos.search&api_key=c757cc8fa7e9cb94be85a8f1dfb0a2ce&nojsoncallback=1&tags=dogl&per_page=10";

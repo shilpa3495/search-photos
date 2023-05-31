@@ -11,36 +11,20 @@ import Header from "../Header/header";
 
 const Home = () => {
   const [list, setList] = useState([]);
-  const [openModal, setOpenModal] = useState({ isOpenModal: false });
+  const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [searchPage, setSearchPage] = useState(1);
   const [loadMore, setLoadMore] = useState(true);
+  const [searchLoadMore, setSearchLoadMore] = useState(true);
 
-  const [searchList, setSearchList] = useState(null);
+  const [searchList, setSearchList] = useState([]);
 
   const [keyword, setKeyword] = useState("");
-  const [error, setError] = useState("");
+
+  const [previewObject, setPreviewObject] = useState({});
 
   const handleSearch = (keyword) => {
     setKeyword(keyword);
-  };
-
-  useEffect(() => {
-    getSearchList(keyword);
-  }, [keyword]);
-
-  useEffect(() => {
-    getList(page);
-    setLoadMore(false);
-  }, [page]);
-
-  const handleScroll = () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 1 >=
-      document.documentElement.scrollHeight
-    ) {
-      setPage((page) => page + 1);
-      setLoadMore(true);
-    }
   };
 
   const getList = () => {
@@ -49,74 +33,136 @@ const Home = () => {
       .then((response) => {
         setList((prev) => [...prev, ...response?.data?.photos?.photo]);
       })
-      .catch((error) => {
-        setError(error);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
-  const getSearchList = () => {
+  const getSearchList = async () => {
     axios
-      .get(`${searchUrl}&tags=${keyword}`)
+      .get(`${searchUrl}&tags=${keyword}&page=${searchPage}`)
       .then((response) => {
-        setSearchList(response?.data?.photos?.photo);
+        setSearchList((prev) => [...prev, ...response?.data?.photos?.photo]);
       })
-      .catch((error) => {
-        setError(error);
+      .catch((err) => {
+        console.log(err);
       });
+  };
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+      if (keyword) {
+        setSearchPage((page) => page + 1);
+        setSearchLoadMore(true);
+      } else {
+        setPage((page) => page + 1);
+        setLoadMore(true);
+      }
+    }
   };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [keyword]);
 
-  const previewImage = (index) => {
-    setOpenModal({ ...openModal, isOpenModal: true, imageIndex: index });
+  useEffect(() => {
+    getList(page);
+    setLoadMore(false);
+  }, [page]);
+
+  useEffect(() => {
+    if (keyword && searchPage >= 1) {
+      getSearchList(keyword, searchPage);
+      setSearchLoadMore(false);
+      setPage(1);
+      setLoadMore(true);
+    }
+    if (!keyword) {
+      setSearchPage(1);
+      setSearchList([]);
+      setSearchLoadMore(true);
+    }
+  }, [keyword, searchPage]);
+
+  const previewListImage = (index) => {
+    setPreviewObject(list[index]);
+    setOpenModal(true);
+  };
+
+  const previewSearchListImage = (index) => {
+    setPreviewObject(searchList[index]);
+    setOpenModal(true);
   };
 
   const handleClose = () => {
-    setOpenModal({ ...openModal, isOpenModal: false });
+    setOpenModal(false);
   };
 
-  if (error) return `Error: ${error.message}`;
-
-  if (!list) return "No post!";
+  if (!list && searchList?.length === 0) return <div>No Photo</div>;
 
   return (
     <Container>
       <Header handleOnChange={handleSearch} />
       <Row className="home-row">
-        {searchList?.length === 0 || searchList === undefined
-          ? list?.map(({ server, secret, id }, index) => (
-              <Col sm={4}>
-                <Image
-                  src={`${imageUrl}${server}/${id}_${secret}.jpg`}
-                  fluid
-                  onClick={() => previewImage(index)}
-                  alt="no photo"
-                  key={id}
-                />
-              </Col>
-            ))
-          : searchList?.map(({ server, secret, id }, index) => (
-              <Col sm={4}>
-                <Image
-                  src={`${imageUrl}${server}/${id}_${secret}.jpg`}
-                  fluid
-                  onClick={() => previewImage(index)}
-                  alt="no photo"
-                  key={id}
-                />
-              </Col>
-            ))}
+        {keyword?.length === 0 ? (
+          <>
+            {list.length !== 0 ? (
+              list?.map(({ server, secret, id }, index) => (
+                <Col sm={4} key={index}>
+                  <Image
+                    src={
+                      server
+                        ? `${imageUrl}${server}/${id}_${secret}.jpg`
+                        : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFSgdhQvBlZO6I8s-jtKIYOED1NqEs4xEjA&usqp=CAU"
+                    }
+                    fluid
+                    onClick={() => previewListImage(index)}
+                    alt="no photo"
+                  />
+                </Col>
+              ))
+            ) : (
+              <p>No photos</p>
+            )}
+
+            {loadMore && <p>Loading data</p>}
+          </>
+        ) : (
+          <>
+            {searchList.length !== 0 ? (
+              searchList?.map(({ server, secret, id }, index) => {
+                return (
+                  <Col sm={4} key={index}>
+                    <Image
+                      src={
+                        server
+                          ? `${imageUrl}${server}/${id}_${secret}.jpg`
+                          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFSgdhQvBlZO6I8s-jtKIYOED1NqEs4xEjA&usqp=CAU"
+                      }
+                      fluid
+                      onClick={() => previewSearchListImage(index)}
+                      alt="no photo"
+                    />
+                  </Col>
+                );
+              })
+            ) : (
+              <p>No search photos</p>
+            )}
+            {searchLoadMore && <p>Loading data</p>}
+          </>
+        )}
 
         <PreviewModal
-          show={openModal.isOpenModal}
+          show={openModal}
           close={handleClose}
-          item={list[openModal?.imageIndex]}
+          item={previewObject}
         />
       </Row>
-      {loadMore && <p>loadmore data</p>}
     </Container>
   );
 };

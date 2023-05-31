@@ -9,6 +9,7 @@
   font-size: 30px;
   margin-bottom: 12px;
   color: #fff;
+  text-align: center;
 }
 
 .header-searchbar-input-main-container {
@@ -35,6 +36,8 @@
   position: absolute !important;
   width: -webkit-fill-available;
   text-align: left;
+  height: 200px !important;
+  overflow-y: auto;
 }
 
 .header-card-container div {
@@ -46,4 +49,10 @@
 
 .header-card-container div :hover {
   background-color: #ebebeb;
+}
+
+
+.header-card-container div .btn{
+  position: sticky;
+  bottom: 10px;
 }

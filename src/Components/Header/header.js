@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import useDebounced from "../../utils/useDebounced";
 import Card from "react-bootstrap/Card";
 import "./header.css";
-import Button from 'react-bootstrap/Button';
+import Button from "react-bootstrap/Button";
 const Header = ({ handleOnChange }) => {
   const [inputValue, setInputValue] = useState("");
+  const [isDrodown, setIsDropdown] = useState(false);
 
   const debouncedSearchTerm = useDebounced(inputValue, 500);
   const getLocalItems = () => {
@@ -19,6 +20,14 @@ const Header = ({ handleOnChange }) => {
   const getInputValue = (e) => {
     setInputValue(e.target.value);
     setItems([...items, inputValue]);
+    setIsDropdown(true);
+  };
+
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      setIsDropdown(false);
+    }
   };
 
   useEffect(() => {
@@ -31,11 +40,11 @@ const Header = ({ handleOnChange }) => {
     }
   }, [debouncedSearchTerm]);
 
-  const removeLocalItems=()=>{
+  const removeLocalItems = () => {
     localStorage.removeItem("Search Values");
     setItems([])
-    setInputValue("")
-  }
+    setIsDropdown(false)
+  };
 
   return (
     <div className="header-searchbar-container">
@@ -44,13 +53,14 @@ const Header = ({ handleOnChange }) => {
         <input
           type="text"
           onChange={getInputValue}
+          onKeyDown={handleKeyDown}
           placeholder={"Search Photos..."}
           value={inputValue}
           name="search"
           className="header-searchbar-input-container"
         />
 
-        {inputValue.length !== 0 && (
+        {isDrodown && inputValue.length !==0 &&(
           <Card className="header-card-container">
             <Card.Body>
               {items.map((item, index) => (
@@ -58,9 +68,10 @@ const Header = ({ handleOnChange }) => {
                   {item}
                 </div>
               ))}
-              <Button variant="danger" onClick={removeLocalItems}>Clear</Button>
+              <Button variant="danger" onClick={removeLocalItems}>
+                Clear
+              </Button>
             </Card.Body>
-
           </Card>
         )}
       </div>
